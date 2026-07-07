@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LinkedIn Auth Callback</title>
+<style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    max-width: 640px;
+    margin: 80px auto;
+    padding: 0 20px;
+    line-height: 1.6;
+    color: #1a1a1a;
+    background: #fafafa;
+    text-align: center;
+  }
+  h1 { font-size: 1.4em; color: #0a66c2; }
+  .code-box {
+    margin-top: 30px;
+    padding: 20px;
+    background: #fff;
+    border: 2px solid #0a66c2;
+    border-radius: 8px;
+    word-break: break-all;
+    font-family: "Courier New", monospace;
+    font-size: 1.1em;
+    user-select: all;
+  }
+  .error-box {
+    margin-top: 30px;
+    padding: 20px;
+    background: #fff0f0;
+    border: 2px solid #cc0000;
+    border-radius: 8px;
+    color: #cc0000;
+  }
+  button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background: #0a66c2;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1em;
+    cursor: pointer;
+  }
+  button:hover { background: #084e96; }
+  .hint {
+    margin-top: 16px;
+    font-size: 0.85em;
+    color: #666;
+  }
+</style>
+</head>
+<body>
+
+<h1>LinkedIn Authorization</h1>
+<div id="result"></div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get("code");
+  const error = params.get("error");
+  const errorDescription = params.get("error_description");
+  const resultDiv = document.getElementById("result");
+
+  if (code) {
+    resultDiv.innerHTML = `
+      <p>Copy this code and paste it into your Colab notebook:</p>
+      <div class="code-box" id="codeBox">${code}</div>
+      <button onclick="copyCode()">Copy code</button>
+      <p class="hint">This code is single-use and expires quickly — use it right away.</p>
+    `;
+  } else if (error) {
+    resultDiv.innerHTML = `
+      <div class="error-box">
+        <strong>Authorization failed:</strong> ${error}<br>
+        ${errorDescription ? errorDescription : ""}
+      </div>
+      <p class="hint">Go back and try the authorization link again.</p>
+    `;
+  } else {
+    resultDiv.innerHTML = `
+      <div class="error-box">
+        <strong>No code found.</strong><br>
+        This page should only be reached via LinkedIn's OAuth redirect.
+      </div>
+    `;
+  }
+
+  function copyCode() {
+    const text = document.getElementById("codeBox").innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      alert("Code copied to clipboard!");
+    });
+  }
+</script>
+
+</body>
+</html>
